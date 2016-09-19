@@ -1,0 +1,114 @@
+resource UBprob()
+							# cs(critical section) = bathroom
+	const m : int := 10 	#number of men
+	const w : int := 10    	#number of women
+	var nm : int := 0 		#number of  men in the bathroom
+	var nw : int := 0  		#number of women in the bathroom
+	var dm : int := 0 		#number of men waiting outside
+	var dw : int := 0 		#number of women waiting outside
+	var turn : int := 0 	#variable to ensure fairness men lower it and women increase it
+	sem mutex := 1
+	sem mG := 0				
+	sem wG := 0
+	
+procedure signal()
+		if(nw = 0 and dm > 0 and nm<4 and (turn >0 or dw=0)) -> 	#if there are no women in cs, men are waiting, 
+			dm--                                                    #there are fewer than 4 men inside and it's the mens' turn 
+			V(mG)                                                   #then a man can enter
+		[](nm = 0 and dw > 0 and nw<4 and (turn <w or dm=0))-> 	#if there are no men in cs, women are waiting, 
+			dw--                                                  #there are fewer than 4 women inside and it's the womens' turn 
+			V(wG)                                                 #then a woman can enter
+		[](nw > 0 or dm = 0 or nm>3 or turn<1) and (nm > 0 or dw = 0 or nw>3 or turn>(w-1)) ->
+			V(mutex)
+		fi
+		nap(int(random(500, 1000)))
+	end
+	
+process Man(i := 1 to m)
+		do true -> 
+			# tries to enter the bathroom
+			#{
+				P(mutex);		#locks the common variables
+				if(nw > 0 or nm>3 or (turn <1 and dw >0)) ->	#if the conditions demand it then it waits
+					dm++
+					V(mutex) 	#other functions can now use the mutex
+					P(mG) 		#now it waits 
+				fi
+				nm ++ 			#another man in the bathroom
+				turn --
+				write(	"Man: ", 
+						i,
+						" enter bathroom: number of men using bathroom:", 
+						nm, 
+						" number of women using bathroom:", 
+						nw,
+						" ")
+				write(	"Man: ", 
+						i,
+						": number of men waiting:", 
+						dm, 
+						"  number of women waiting:", 
+						dw,
+						"")
+				signal()		#releases men waiting and/or release the variables
+			#}
+			
+			#lämna badrum
+			#{
+				P(mutex) 	#locks variables
+				write("Man: ", i," leaves bathroom")
+				nm--; 		#one man less in the bathroom
+				signal() 	#releases men/women waiting and/or release variables
+			#}
+			
+		od
+	end
+
+process Woman(j := 1 to w) #almost the same code as men, just different variables
+		do true -> 
+			# tries to enter bathroom
+			#{
+				P(mutex);		
+				if(nm > 0 or nw>3 or (turn >(w-1) and dm >0)) ->	
+					dw++
+					V(mutex) 	
+					P(wG) 		
+				fi
+				nw ++ 	
+				turn++
+					write(	"Woman: ", 
+						j,
+						" enter bathroom: number of men using bathroom:", 
+						nm, 
+						" number of women using bathroom:", 
+						nw,
+						" ")
+				write(	"Woman: ", 
+						j,
+						": number of men waiting:", 
+						dm, 
+						"  number of women waiting:", 
+						dw,
+						"")
+				signal()
+			#}
+			
+			
+			# leaves the bathroom
+			#{
+				P(mutex)
+				write("Woman: ", j," leaves bathroom")
+				nw--;
+				signal()
+			#}
+			
+		od
+	end
+#	dw <= nw
+#	dm <= nm
+#	
+#	
+	
+
+
+end UBprob
