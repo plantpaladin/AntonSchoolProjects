@@ -1,0 +1,76 @@
+resource SmokersProb()
+
+var n : int := 10      #number of processes
+
+op CHANNEL[1:n](int)
+
+process Agent
+	var tobacco : int := 0	#the number of tobacco on the table
+	var paper : int := 0	#the number of paper on the table
+	var matches : int := 0	#the number of matches on the table
+	var temp1 : int := 0 	#which type of process that should recieve the ingredients
+	do true ->
+		
+		
+		receive CHANNEL[n](temp1) #the channel n is used for requests
+		
+		if(temp1 = 1)->   #if the value is 1 then it's a process that got tobacco
+			matches++
+			paper++
+			send CHANNEL[temp1](1)    # channel 1 is used for processes that got tobacco
+			write( " Agent send to A matches: ", matches, " and paper: ", paper, "")
+			nap(1000)
+			matches--
+			paper--
+			write(" Agent receive from A matches: ", matches, " and paper: ", paper, "")
+			nap(1000)
+		[](temp1 = 2)->    #if the value is 2 then it's a process that got paper
+			matches++
+			tobacco++
+			send CHANNEL[temp1](2)   # channel 2 is used for processes that got paper
+			write( " Agent send to B matches: ", matches, " and tobacco: ", tobacco, "")
+			nap(1000)
+			matches--
+			tobacco--
+			write(" Agent receive from B matches: ", matches, " and tobacco: ", tobacco, "")
+			nap(1000)
+			
+		[](temp1 = 3)->   #if the value is 3 then it's a process that got matches
+			tobacco ++
+			paper++
+			send CHANNEL[temp1](3)   # channel 3 is used for processes that got matches
+			write( " Agent send to C tobacco: ", tobacco, " and paper: ", paper, "")
+			nap(1000)
+			tobacco --
+			paper--
+			write(" Agent receive from C tobacco: ", tobacco, " and tobacco: ", tobacco, "")
+			nap(1000)
+		fi
+		
+	od
+	
+end	
+	
+process Smoker(i := 1 to n-1)
+var typenum : int := 0      #the process remainder is used to determinate the typenum
+{
+	if((i%3 + 1) = 1) ->
+	typenum := 1
+	[] ((i%3 + 1) = 2) ->
+	typenum := 2
+	[] ((i%3 + 1) = 3) ->
+	typenum := 3
+	fi                      #}
+	do true->
+	var temp : int := 0 
+	send CHANNEL[n](typenum)    #sends a request to the agent
+	write(" Smoker: ", i, " sends request")
+	receive CHANNEL[typenum](temp)  # recieves a request from the agent that the ingridients is available
+	
+	write(" Smoker: ", i, " is smoking")
+		nap(10*int(random(1000)))
+		#smokes
+	od
+end
+
+end SmokersProb
