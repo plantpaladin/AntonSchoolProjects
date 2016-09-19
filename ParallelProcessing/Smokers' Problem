@@ -74,3 +74,4 @@ var typenum : int := 0      #the process remainder is used to determinate the ty
 end
 
 end SmokersProb
+#Made by Andreas Sundberg, Anton Johansson and Peter Nilsson
