@@ -1,0 +1,46 @@
+#include <vector> 
+#include <iostream> 
+int findlargest(std::vector<int> v) 
+{ 
+    int maxvalue=0;//only works on positive 
+    int size = v.size(); 
+    for(int i = 0; i<size; i++) 
+    { 
+        if (v[i]>maxvalue) 
+            maxvalue = v[i]; 
+    } 
+    return maxvalue; 
+} 
+  
+std::vector <int> new_vector(int size) 
+{ 
+    std::vector<int> return_v; 
+    for (int i = 0; i<size; i++) 
+    { 
+        return_v.push_back(0); 
+    } 
+    return return_v; 
+} 
+int main() 
+{ 
+    const int size = 7; 
+    int arr[size] = {5,3,9,2,4,6,6}; 
+    std::vector<int> v(std::begin(arr), std::end(arr)); 
+    int k = findlargest(v); 
+    std::vector<int> w = new_vector(k+1); 
+    for(int i =0; i < size; i++) 
+    { 
+        w[v[i]] = w[v[i]] + 1; 
+    } 
+    v.clear(); 
+    for (int i =0; i<w.size(); i++) 
+    { 
+        for (int j =0; j<w[i]; j++) 
+        { 
+            v.push_back(i); 
+            std::cout << i; 
+        } 
+    } 
+    std::cin.get(); 
+    return 0;
+}
