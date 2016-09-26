@@ -1,0 +1,29 @@
+#ifndef ENTITY
+#define ENTITY
+#include <vector>
+#include <string>
+#include <sstream>
+#include "VirtualGameConsole\VirtualGameConsole\VGCVirtualGameConsole.h"
+class Entity{
+public:
+enum Layer{
+BACKGROUND,
+FOREGROUND
+};
+typedef std::vector<Entity*> EntityVector;
+Entity();
+virtual bool isAlive() = 0;
+virtual bool isEnemy() = 0;
+virtual VGCVector getPosition() = 0;
+virtual int getRadius() = 0;
+virtual int getDamage() = 0;
+virtual void tick(EntityVector &entities) = 0;
+virtual int collide(Entity *entity, EntityVector &entities) = 0;
+virtual void render(Layer layer) = 0;
+};
+#endif
+
+//this is the cpp file
+
+#include "Entity.h"
+Entity::Entity(){}
