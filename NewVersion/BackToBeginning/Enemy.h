@@ -4,11 +4,14 @@
 class Enemy : public Object
 {
 public:
-	Enemy(int x, int y, int radius, std::string spriteName);
-	virtual void update()
+	Enemy(float x, float y, float radius,float speed, sf::Sprite * sprite);
+	void newPosition(int x);//gives a new position to the object(used when entering from object pool)
+
+	virtual void update(float deltaTime);
+	virtual bool canShoot();
 	~Enemy();
 private:
-	sf::Texture m_texture;
-
+	float m_timeSinceLastShot;
+	int movingRight;
 };
 
