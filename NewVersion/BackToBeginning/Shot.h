@@ -1,10 +1,13 @@
 #pragma once
-class Shot
+#include "Object.h"
+#include "SFML\Graphics\Texture.hpp"
+
+class Shot : public Object
 {
 public:
-	Shot();
-	void update();
-	bool isColliding(int x1,int x2,int y1,int y2);
+	Shot(float x, float y, float radius, float speed, sf::Sprite *  sprite);
+	void newPosition(sf::Vector2f newPosition);
+	virtual void update(float deltaTime);
 	~Shot();
 };
 
