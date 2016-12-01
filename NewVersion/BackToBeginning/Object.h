@@ -1,28 +1,33 @@
 #pragma once
 #include <math.h>
 #include "SFML\Graphics\Sprite.hpp"
-#include "SFML\Graphics\RenderWindow.hpp"
 class Object
 {
 protected:
-	int m_x, m_y, m_radius;
-	sf::Sprite m_sprite;//stored as a pointer so it can be retrived
+
+	float m_x, m_y, m_radius,m_speed;
+	sf::Sprite * m_sprite;
 public:
-	virtual void update() = 0;//unique for all players, primarly movement
-	virtual bool collide(double x, double y, double radius)//same for all objects
-	{//returns whether the player collides
-		double dx = x - m_x;
-		double dy = y - m_y;
-		double distance = sqrt(dx*dx + dy*dy);
-		if (distance < (radius + m_radius))
+	//not defined here as noone should try to instanciate object directly
+	virtual void update(float deltaTime)=0;//unique for all objects, primarly movement
+	
+	virtual bool collide(sf::Sprite * sprite)//same for all objects
+	{
+		if (m_sprite->getGlobalBounds().intersects(sprite->getGlobalBounds()))
 		{
 			return true;
 		}
 		return false;
 	}
-	virtual void drawSprite(sf::RenderWindow window)
+	virtual sf::Sprite * getSprite()
 	{
-		window.draw(m_sprite);
+		m_sprite->setPosition(m_x, m_y);
+		return m_sprite;
+	}
+
+	virtual sf::Vector2f getPosition()
+	{
+		return sf::Vector2f(m_x, m_y);
 	}
 };
 
