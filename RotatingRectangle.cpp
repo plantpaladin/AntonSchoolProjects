@@ -86,8 +86,9 @@ window.setView(view);
 while (window.isOpen())  {   
  sf::Event event1;   
 while (window.pollEvent(event1))   {       
-if (event1.type == sf::Event::Closed)     window.close();    else    
-{    
+if (event1.type == sf::Event::Closed)     
+{
+ window.close();    
 }   
 }      
 window.clear();   
