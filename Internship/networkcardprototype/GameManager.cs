@@ -33,9 +33,7 @@ public class GameManager : NetworkManager
         NetworkServer.connections[i].Send(GMMsg.initialize, m);
         NetworkServer.connections[i].RegisterHandler(PlayerMsg.cardPlayed, msgCardPlay);
         NetworkServer.connections[i].RegisterHandler(PlayerMsg.votePoints, msgVotePoints);
-        /*
-        IntegerMessage m2 = new IntegerMessage(2);
-        NetworkServer.connections[i].Send(GMMsg.cardShow, m2);*/
+
     }
     void msgVotePoints(NetworkMessage msg)
     {
